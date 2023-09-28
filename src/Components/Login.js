@@ -10,7 +10,6 @@ import { useDispatch } from "react-redux";
 const Login = () => {
     const [isLogin, setisLogin] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
-    const navigate = useNavigate();
     const dispatch = useDispatch();
 
 
@@ -28,14 +27,18 @@ const Login = () => {
 
 
         if (email.current && password.current) {
+            // Extract email and password values
             const emailValue = email.current.value;
             const passwordValue = password.current.value;
-
+        
+            // Validate email and password
             const message = checkValidData(emailValue, passwordValue);
+            // Set error message if validation fails
             setErrorMessage(message);
-
+        
+            // If validation message exists, stop execution
             if (message) return;
-
+        
             let action;
             if (!isLogin) {
                 // If signing up, create a new user with email and password
@@ -43,15 +46,13 @@ const Login = () => {
                     auth,
                     emailValue,
                     passwordValue
-                ).then((userCredential) =>
-                 {
+                ).then((userCredential) => {
                     // After user is created, update their profile
                     const user = userCredential.user;
-
+        
                     return updateProfile(user, {
                         displayName: name.current.value,
                         photoURL: "https://example.com/jane-q-user/profile.jpg"
-
                     }).then(() => {
                         // Dispatch addUser action to add user data to Redux store
                         const { uid, displayName, email } = auth.currentUser;
@@ -62,17 +63,15 @@ const Login = () => {
                 // If logging in, sign in existing user with email and password
                 action = signInWithEmailAndPassword(auth, emailValue, passwordValue);
             }
-
-            action.then(() => {
-                // After login/signup is successful, navigate to browse page
-                navigate("/browse");
-            }).catch((error) => {
+        
+            action.catch((error) => {
                 // If an error occurs during login/signup, set error message
                 const errorCode = error.code;
                 const errorMessage = error.message;
                 setErrorMessage(errorCode + "-" + errorMessage);
             });
         }
+        
 
 
 
@@ -105,7 +104,6 @@ const Login = () => {
         //                     // Dispatch addUser action to add user data to Redux store
         //                     dispatch(addUser({ uid: uid, displayName: displayName, email: email }))
 
-        //                     navigate("/browse")
         //                 }).catch((error) => {
         //                     // An error occurred
 
@@ -124,8 +122,6 @@ const Login = () => {
         //             .then((userCredential) => {
         //                 // Signed in 
         //                 const user = userCredential.user;
-        //                 console.log(user)
-        //                 navigate("/browse")
 
         //             })
         //             .catch((error) => {

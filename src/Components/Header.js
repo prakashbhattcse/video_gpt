@@ -1,28 +1,49 @@
-import { React, useState } from 'react'
-import { getAuth, signOut } from "firebase/auth";
-import { removeUser } from '../Utils/userSlice';
-import { useNavigate } from 'react-router-dom';
+import { React, useState,useEffect } from 'react'
+import { getAuth, signOut,onAuthStateChanged } from "firebase/auth";
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { addUser, removeUser } from "../Utils/userSlice"
 
 
 const Header = () => {
 
   const user = useSelector(store => store.user)
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const nevigate = useNavigate();
 
   const handleSignOut = () => {
 
     const auth = getAuth();
-    signOut(auth).then(() => {
-      // Sign-out successful.
-      dispatch(removeUser());
-      nevigate("/")
-    }).catch((error) => {
-      // An error happened.
+    signOut(auth).then(() => {})
+    .catch((error) => {
+      navigate("/error");
     });
   }
+
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    // Add an auth state changed listener
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // If user is signed in, get their data
+        const { uid, displayName, email } = user;
+
+        // Dispatch addUser action to add user data to Redux store
+        dispatch(addUser({ uid: uid, displayName: displayName, email: email }))
+        navigate("/browse")
+    
+      } else {
+        // If user is signed out, dispatch an action 
+        dispatch(removeUser())
+        navigate("/")
+      }
+    });
+  }, [])
+
+
 
   return (
     <>

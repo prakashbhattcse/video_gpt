@@ -6,7 +6,7 @@
 - Routing of App
 - Login Form
 - Sign up Form
-- Form Validation
+- Form Validation regex
 - useRef Hook
 - Firebase Setup
 - Deploying our app to production
@@ -15,6 +15,8 @@
 - Created Redux Store with userSlice
 - Implemented Sign out 
 - Update Profile
+
+// Episode 2 (15)
 - BugFix: Sign up user displayName and profile picture update
 - BugFix: if the user is not logged in Redirect /browse to Login Page and vice-versa
 - Unsubscibed to the onAuthStateChanged callback
