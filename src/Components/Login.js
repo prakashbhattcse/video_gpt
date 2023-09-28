@@ -4,11 +4,16 @@ import { checkValidData } from "../Utils/Validate";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, } from "firebase/auth";
 import { auth } from "../Utils/Firebase";
 import { useNavigate } from "react-router-dom";
+import { addUser } from "../Utils/userSlice";
+import { useDispatch } from "react-redux";
 
 const Login = () => {
     const [isLogin, setisLogin] = useState(true);
     const [errorMessage, setErrorMessage] = useState(null);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+
 
     const handleLogin = () => {
         setisLogin(!isLogin);
@@ -20,113 +25,122 @@ const Login = () => {
     const password = useRef(null);
 
     const handleButtonClick = () => {
-        if (email.current && password.current) {
 
-            const message = checkValidData(email.current.value, password.current.value);
+
+        if (email.current && password.current) {
+            const emailValue = email.current.value;
+            const passwordValue = password.current.value;
+
+            const message = checkValidData(emailValue, passwordValue);
             setErrorMessage(message);
 
             if (message) return;
 
+            let action;
             if (!isLogin) {
-                // Create new user with email and password
-                createUserWithEmailAndPassword(
+                // If signing up, create a new user with email and password
+                action = createUserWithEmailAndPassword(
                     auth,
-                    email.current.value,
-                    password.current.value
-                )
-                    .then((userCredential) => {
-                        const user = userCredential.user;
-                        console.log(name.current.value)
-                        updateProfile(user, {
-                            displayName: name.current.value,
-                            photoURL: "https://example.com/jane-q-user/profile.jpg"
-                        }).then(() => {
-                            // Profile updated!
-                            navigate("/browse")
-                        }).catch((error) => {
-                            // An error occurred
-                
-                        });
-                        // Signed in
+                    emailValue,
+                    passwordValue
+                ).then((userCredential) =>
+                 {
+                    // After user is created, update their profile
+                    const user = userCredential.user;
 
-                    })
-                    .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        setErrorMessage(errorCode + "-" + errorMessage)
+                    return updateProfile(user, {
+                        displayName: name.current.value,
+                        photoURL: "https://example.com/jane-q-user/profile.jpg"
+
+                    }).then(() => {
+                        // Dispatch addUser action to add user data to Redux store
+                        const { uid, displayName, email } = auth.currentUser;
+                        dispatch(addUser({ uid: uid, displayName: displayName, email: email }));
                     });
+                });
             } else {
-                // Sign in existing user with email and password
-                signInWithEmailAndPassword(auth, email.current.value, password.current.value)
-                    .then((userCredential) => {
-                        // Signed in 
-                        const user = userCredential.user;
-                        console.log(user)
-                        navigate("/browse")
-                    
-                    })
-                    .catch((error) => {
-                        const errorCode = error.code;
-                        const errorMessage = error.message;
-                        setErrorMessage(errorMessage)
-                    });
+                // If logging in, sign in existing user with email and password
+                action = signInWithEmailAndPassword(auth, emailValue, passwordValue);
             }
+
+            action.then(() => {
+                // After login/signup is successful, navigate to browse page
+                navigate("/browse");
+            }).catch((error) => {
+                // If an error occurs during login/signup, set error message
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                setErrorMessage(errorCode + "-" + errorMessage);
+            });
         }
+
+
+
+
+
+        // if (email.current && password.current) {
+
+        //     const message = checkValidData(email.current.value, password.current.value);
+        //     setErrorMessage(message);
+
+        //     if (message) return;
+
+        //     if (!isLogin) {
+        //         // Create new user with email and password
+        //         createUserWithEmailAndPassword(
+        //             auth,
+        //             email.current.value,
+        //             password.current.value
+        //         )
+        //             .then((userCredential) => {
+        //                 const user = userCredential.user;
+        //                 console.log(name.current.value)
+        //                 updateProfile(user, {
+        //                     displayName: name.current.value,
+        //                     photoURL: "https://example.com/jane-q-user/profile.jpg"
+        //                 }).then(() => {
+        //                     // Profile updated!
+        //                     const { uid, displayName, email } = auth.currentUser;
+
+        //                     // Dispatch addUser action to add user data to Redux store
+        //                     dispatch(addUser({ uid: uid, displayName: displayName, email: email }))
+
+        //                     navigate("/browse")
+        //                 }).catch((error) => {
+        //                     // An error occurred
+
+        //                 });
+        //                 // Signed in
+
+        //             })
+        //             .catch((error) => {
+        //                 const errorCode = error.code;
+        //                 const errorMessage = error.message;
+        //                 setErrorMessage(errorCode + "-" + errorMessage)
+        //             });
+        //     } else {
+        //         // Sign in existing user with email and password
+        //         signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+        //             .then((userCredential) => {
+        //                 // Signed in 
+        //                 const user = userCredential.user;
+        //                 console.log(user)
+        //                 navigate("/browse")
+
+        //             })
+        //             .catch((error) => {
+        //                 const errorCode = error.code;
+        //                 const errorMessage = error.message;
+        //                 setErrorMessage(errorMessage)
+        //             });
+        //     }
+        // }
     };
-
-
-    // const [isLogin, setisLogin] = useState(true);
-
-    // const [errorMessage, setErrorMessage] = useState(null);
-
-    // const navigate = useNavigate();
-
-    // const name = useRef(null);
-    // const email = useRef(null);
-    // const password = useRef(null);
-
-    // // toggle login status
-    // const handleLogin = () => {
-    //     setisLogin(!isLogin);
-    // };
-
-    // // Handle button click for login/signup
-    // const handleButtonClick = async () => {
-
-    //     // Checks inputs are not null
-    //     if (name.current && email.current && password.current) {
-    //         // Validate inputs
-    //         const message = checkValidData(name.current,email.current.value, password.current.value);
-
-    //         setErrorMessage(message);
-
-    //         // If there's a validation error message, return early
-    //         if (message) return;
-
-    //         try {
-    //             let userCredential;
-    //             // If not in login mode, create new user with email and password
-    //             if (!isLogin) {
-    //                 userCredential = await createUserWithEmailAndPassword(auth, email.current.value, password.current.value);
-    //             } else {
-    //                 // If in login mode, sign in existing user with email and password
-    //                 userCredential = await signInWithEmailAndPassword(auth, email.current.value, password.current.value);
-    //             }
-    //             console.log(userCredential.user);
-
-    //             // Navigate to browse page after successful login/signup
-    //             navigate("/browse");
-    //         } catch (error) {
-    //             // If error during login/signup
-    //             setErrorMessage(error.message);
-    //         }
-    //     }
-    // };
 
 
     return (
         <div className="relative  min-h-screen flex flex-col from-black">
-            <Header/>
+            <Header />
 
             <div className="absolute w-full h-full ">
                 <img

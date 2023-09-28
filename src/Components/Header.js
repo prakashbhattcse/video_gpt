@@ -2,13 +2,13 @@ import { React, useState } from 'react'
 import { getAuth, signOut } from "firebase/auth";
 import { removeUser } from '../Utils/userSlice';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 const Header = () => {
 
-  // const [state, setstate] = useState(false)
   const user = useSelector(store => store.user)
+  const dispatch = useDispatch();
 
   const nevigate = useNavigate();
 
@@ -17,7 +17,7 @@ const Header = () => {
     const auth = getAuth();
     signOut(auth).then(() => {
       // Sign-out successful.
-      // setstate(true)
+      dispatch(removeUser());
       nevigate("/")
     }).catch((error) => {
       // An error happened.
