@@ -1,7 +1,14 @@
-import React from 'react'
+
 import Header from './Header'
+import { useNowPlayingMovies } from './Hooks/useNowPlayingMovies';
+
 
 const Browse = () => {
+
+  // This hook is designed to fetch data from a movie API and dispatch an action to add the fetched data to the Redux store.
+  useNowPlayingMovies();
+
+
   return (
     <>
       <div className="h-full flex flex-col">

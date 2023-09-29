@@ -3,7 +3,6 @@ import Header from "./Header";
 import { checkValidData } from "../Utils/Validate";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, } from "firebase/auth";
 import { auth } from "../Utils/Firebase";
-import { useNavigate } from "react-router-dom";
 import { addUser } from "../Utils/userSlice";
 import { useDispatch } from "react-redux";
 
@@ -31,9 +30,7 @@ const Login = () => {
             const emailValue = email.current.value;
             const passwordValue = password.current.value;
         
-            // Validate email and password
             const message = checkValidData(emailValue, passwordValue);
-            // Set error message if validation fails
             setErrorMessage(message);
         
             // If validation message exists, stop execution
