@@ -1,6 +1,7 @@
 
 import Header from './Header'
 import { useNowPlayingMovies } from './Hooks/useNowPlayingMovies';
+import MainContainer from './MainContainer';
 
 
 const Browse = () => {
@@ -11,9 +12,9 @@ const Browse = () => {
 
   return (
     <>
-      <div className="h-full flex flex-col">
+      <div>
         <Header />
-
+        <MainContainer />
         {/* <h1 className='text-9xl flex justify-center align-middle items-center text-zinc-600 h-full m-auto mt-64'>COMING SOON</h1> */}
       </div>
     </>

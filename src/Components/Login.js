@@ -29,13 +29,13 @@ const Login = () => {
             // Extract email and password values
             const emailValue = email.current.value;
             const passwordValue = password.current.value;
-        
+
             const message = checkValidData(emailValue, passwordValue);
             setErrorMessage(message);
-        
+
             // If validation message exists, stop execution
             if (message) return;
-        
+
             let action;
             if (!isLogin) {
                 // If signing up, create a new user with email and password
@@ -46,7 +46,7 @@ const Login = () => {
                 ).then((userCredential) => {
                     // After user is created, update their profile
                     const user = userCredential.user;
-        
+
                     return updateProfile(user, {
                         displayName: name.current.value,
                         photoURL: "https://example.com/jane-q-user/profile.jpg"
@@ -60,7 +60,7 @@ const Login = () => {
                 // If logging in, sign in existing user with email and password
                 action = signInWithEmailAndPassword(auth, emailValue, passwordValue);
             }
-        
+
             action.catch((error) => {
                 // If an error occurs during login/signup, set error message
                 const errorCode = error.code;
@@ -68,7 +68,7 @@ const Login = () => {
                 setErrorMessage(errorCode + "-" + errorMessage);
             });
         }
-        
+
 
 
 
@@ -143,7 +143,7 @@ const Login = () => {
             </div>
 
             {/* form */}
-            <div className="relative z-10 flex items-center justify-center m-auto  bg-black bg-opacity-80 mt-20 max-w-2/3">
+            <div className="mt-20 relative z-10 flex items-center justify-center m-auto  bg-black bg-opacity-80 max-w-2/3">
                 <form
                     onSubmit={(e) => e.preventDefault()}
                     className="flex flex-col gap-9 text-gray-400 py-20 w-full mx-12"
