@@ -3,6 +3,7 @@ import { getAuth, signOut, onAuthStateChanged } from "firebase/auth";
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from "../Utils/userSlice"
+import { LOGO } from '../Utils/constant';
 
 const Header = () => {
 
@@ -62,15 +63,20 @@ const Header = () => {
 
   return (
     <>
-      <div className='fixed z-20 w-full bg-gradient-to-b from-black p-2 pt-5 pl-10 flex justify-between'>
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1198px-Netflix_2015_logo.svg.png?20190206123158" alt="" className='w-48' />
+
+      <div className="sticky w-full px-8 pt-6 py-2 bg-gradient-to-b from-black z-10 flex flex-col md:flex-row justify-between">
+        <img className="w-44 mx-auto md:mx-0" src={LOGO} alt="logo" />
 
         {/* If user is signed in, show Sign Out button and display name */}
         {user &&
-          (<><button className='text-lg z-40 text-white' onClick={handleSignOut}>Sign Out</button>
-            <div className="">{user.displayName}</div></>)
+          (<div className="flex align-middle items-center gap-6 justify-between">
+            <button className='text-2xl z-40 text-white font-bold' onClick={handleSignOut}>Sign Out</button>
+            <div className="text-white text-2xl font-bold align-middle">{user.displayName}</div>
+          </div>
+          )
         }
       </div>
+
     </>
   )
 }
@@ -78,4 +84,4 @@ const Header = () => {
 export default Header
 
 
- 
+

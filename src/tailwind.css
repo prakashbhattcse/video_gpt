@@ -1,0 +1,15 @@
+/* tailwind.css */
+@layer components {
+    .btn {
+      @apply p-3 px-5 rounded-md font-semibold;
+    }
+  
+    .btn-primary {
+      @apply bg-white text-black w-28;
+    }
+  
+    .btn-secondary {
+      @apply bg-gray-100 opacity-60 text-black w-28;
+    }
+  }
+  
